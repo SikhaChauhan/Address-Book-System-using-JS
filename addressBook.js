@@ -132,6 +132,23 @@ class AddressBook {
     results.map(contact => console.log(contact.display()));
     return results;
   }
+
+  getCountByCityAndState() {
+    const cityCount = this.contacts.reduce((acc, contact) => {
+      acc[contact.city] = (acc[contact.city] || 0) + 1;
+      return acc;
+    }, {});
+
+    const stateCount = this.contacts.reduce((acc, contact) => {
+      acc[contact.state] = (acc[contact.state] || 0) + 1;
+      return acc;
+    }, {});
+
+    console.log("Contact count by city:", cityCount);
+    console.log("Contact count by state:", stateCount);
+
+    return { cityCount, stateCount };
+  }
 }
 
 class AddressBookManager {
@@ -195,6 +212,7 @@ function createContact(addressBook) {
                     addressBook.addContact(newContact);
                     addressBook.listContacts();
                     addressBook.getContactCount();
+                    addressBook.getCountByCityAndState();
                   } catch (error) {
                     console.error(error.message);
                   }
