@@ -19,16 +19,18 @@ class Contact {
     this.email = email;
   }
 
+<<<<<<< HEAD
   updateDetails(newDetails) {
     Object.assign(this, newDetails);
   }
 
   // Display contact details
+=======
+>>>>>>> UC6
   display() {
     return `${this.firstName} ${this.lastName} - ${this.phone}, ${this.email}`;
   }
 
-  // Validation Methods
   validateName(name, fieldName) {
     const namePattern = /^[A-Z][a-zA-Z]{2,}$/;
     if (!namePattern.test(name)) {
@@ -64,7 +66,6 @@ class Contact {
   }
 }
 
-// AddressBook class to manage contacts
 class AddressBook {
   constructor(name) {
     this.name = name;
@@ -95,16 +96,21 @@ class AddressBook {
     });
   }
 
+<<<<<<< HEAD
   deleteContactByName(firstName, lastName) {
+=======
+  findAndDeleteContact(firstName, lastName) {
+>>>>>>> UC6
     const index = this.contacts.findIndex(contact => contact.firstName === firstName && contact.lastName === lastName);
     if (index === -1) {
-      console.log(`Contact ${firstName} ${lastName} not found.`);
+      console.log("Contact not found.");
       return;
     }
     this.contacts.splice(index, 1);
-    console.log(`Contact ${firstName} ${lastName} deleted successfully!`);
+    console.log(`Contact ${firstName} ${lastName} deleted successfully.`);
   }
 
+<<<<<<< HEAD
   updateContactByName(firstName, lastName, newDetails) {
     const contact = this.contacts.find(contact => contact.firstName === firstName && contact.lastName === lastName);
     if (!contact) {
@@ -115,13 +121,15 @@ class AddressBook {
     console.log(`Contact ${firstName} ${lastName} updated successfully!`);
   }
 
+=======
+>>>>>>> UC6
   getContactCount() {
-    console.log(`Total Contacts in ${this.name}: ${this.contacts.length}`);
-    return this.contacts.length;
+    const count = this.contacts.reduce((total) => total + 1, 0);
+    console.log(`Total contacts in '${this.name}': ${count}`);
+    return count;
   }
 }
 
-// AddressBookManager to manage multiple address books
 class AddressBookManager {
   constructor() {
     this.addressBooks = [];
