@@ -19,20 +19,10 @@ class Contact {
     this.email = email;
   }
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
   updateDetails(newDetails) {
     Object.assign(this, newDetails);
   }
 
-  // Display contact details
-=======
->>>>>>> UC6
-=======
->>>>>>> UC7
-=======
->>>>>>> UC8
   display() {
     return `${this.firstName} ${this.lastName} - ${this.phone}, ${this.email}`;
   }
@@ -98,16 +88,8 @@ class AddressBook {
       throw new Error("Contact not found.");
     }
 
-    try {
-      for (const key in updatedInfo) {
-        if (contact.hasOwnProperty(key)) {
-          contact[key] = updatedInfo[key];
-        }
-      }
-      console.log(`Contact ${firstName} ${lastName} updated successfully.`);
-    } catch (error) {
-      console.error("Error updating contact:", error.message);
-    }
+    contact.updateDetails(updatedInfo);
+    console.log(`Contact ${firstName} ${lastName} updated successfully.`);
   }
 
   listContacts() {
@@ -121,19 +103,7 @@ class AddressBook {
     });
   }
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
   deleteContactByName(firstName, lastName) {
-=======
-  findAndDeleteContact(firstName, lastName) {
->>>>>>> UC6
-=======
-  findAndDeleteContact(firstName, lastName) {
->>>>>>> UC7
-=======
-  findAndDeleteContact(firstName, lastName) {
->>>>>>> UC8
     const index = this.contacts.findIndex(contact => contact.firstName === firstName && contact.lastName === lastName);
     if (index === -1) {
       console.log("Contact not found.");
@@ -141,33 +111,11 @@ class AddressBook {
     }
     this.contacts.splice(index, 1);
     console.log(`Contact ${firstName} ${lastName} deleted successfully.`);
-<<<<<<< HEAD
-<<<<<<< HEAD
   }
 
-<<<<<<< HEAD
-  updateContactByName(firstName, lastName, newDetails) {
-    const contact = this.contacts.find(contact => contact.firstName === firstName && contact.lastName === lastName);
-    if (!contact) {
-      console.log(`Contact ${firstName} ${lastName} not found.`);
-      return;
-    }
-    contact.updateDetails(newDetails);
-    console.log(`Contact ${firstName} ${lastName} updated successfully!`);
-=======
->>>>>>> UC7
-=======
->>>>>>> UC8
-  }
-
-=======
->>>>>>> UC6
   getContactCount() {
-    const count = this.contacts.reduce((total) => total + 1, 0);
-    console.log(`Total contacts in '${this.name}': ${count}`);
-    return count;
-<<<<<<< HEAD
-=======
+    console.log(`Total contacts in '${this.name}': ${this.contacts.length}`);
+    return this.contacts.length;
   }
 
   searchByCityOrState(location) {
@@ -179,7 +127,6 @@ class AddressBook {
     console.log(`Contacts in ${location}:`);
     results.forEach(contact => console.log(contact.display()));
     return results;
->>>>>>> UC8
   }
 }
 
@@ -222,25 +169,16 @@ const readline = require("readline").createInterface({
 });
 
 function createContact(addressBook) {
-  readline.question("Enter First Name: ", (firstName) => {
-    readline.question("Enter Last Name: ", (lastName) => {
-      readline.question("Enter Address: ", (address) => {
-        readline.question("Enter City: ", (city) => {
-          readline.question("Enter State: ", (state) => {
-            readline.question("Enter ZIP Code: ", (zip) => {
-              readline.question("Enter Phone Number: ", (phone) => {
-                readline.question("Enter Email: ", (email) => {
+  readline.question("Enter First Name: ", firstName => {
+    readline.question("Enter Last Name: ", lastName => {
+      readline.question("Enter Address: ", address => {
+        readline.question("Enter City: ", city => {
+          readline.question("Enter State: ", state => {
+            readline.question("Enter ZIP Code: ", zip => {
+              readline.question("Enter Phone Number: ", phone => {
+                readline.question("Enter Email: ", email => {
                   try {
-                    const newContact = new Contact(
-                      firstName,
-                      lastName,
-                      address,
-                      city,
-                      state,
-                      zip,
-                      phone,
-                      email
-                    );
+                    const newContact = new Contact(firstName, lastName, address, city, state, zip, phone, email);
                     addressBook.addContact(newContact);
                     addressBook.listContacts();
                     addressBook.getContactCount();
@@ -259,7 +197,7 @@ function createContact(addressBook) {
 }
 
 function createAddressBook() {
-  readline.question("Enter new Address Book name: ", (name) => {
+  readline.question("Enter new Address Book name: ", name => {
     try {
       const newBook = manager.createAddressBook(name);
       console.log(`ℹ️ Address Book '${name}' is ready.`);
