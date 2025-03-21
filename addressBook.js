@@ -20,6 +20,7 @@ class Contact {
   }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
   updateDetails(newDetails) {
     Object.assign(this, newDetails);
   }
@@ -27,6 +28,8 @@ class Contact {
   // Display contact details
 =======
 >>>>>>> UC6
+=======
+>>>>>>> UC7
   display() {
     return `${this.firstName} ${this.lastName} - ${this.phone}, ${this.email}`;
   }
@@ -77,12 +80,31 @@ class AddressBook {
       throw new Error("Invalid contact object.");
     }
 
-    if (this.contacts.some(c => c.firstName === contact.firstName && c.lastName === contact.lastName)) {
-      throw new Error("Duplicate Entry: Contact with the same name already exists.");
+    const isDuplicate = this.contacts.some(c => c.firstName === contact.firstName && c.lastName === contact.lastName);
+    if (isDuplicate) {
+      throw new Error("Duplicate contact: A contact with the same name already exists.");
     }
 
     this.contacts.push(contact);
     console.log(`Contact added to ${this.name} successfully!`);
+  }
+
+  updateContact(firstName, lastName, updatedInfo) {
+    const contact = this.contacts.find(c => c.firstName === firstName && c.lastName === lastName);
+    if (!contact) {
+      throw new Error("Contact not found.");
+    }
+
+    try {
+      for (const key in updatedInfo) {
+        if (contact.hasOwnProperty(key)) {
+          contact[key] = updatedInfo[key];
+        }
+      }
+      console.log(`Contact ${firstName} ${lastName} updated successfully.`);
+    } catch (error) {
+      console.error("Error updating contact:", error.message);
+    }
   }
 
   listContacts() {
@@ -97,10 +119,14 @@ class AddressBook {
   }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
   deleteContactByName(firstName, lastName) {
 =======
   findAndDeleteContact(firstName, lastName) {
 >>>>>>> UC6
+=======
+  findAndDeleteContact(firstName, lastName) {
+>>>>>>> UC7
     const index = this.contacts.findIndex(contact => contact.firstName === firstName && contact.lastName === lastName);
     if (index === -1) {
       console.log("Contact not found.");
@@ -108,6 +134,7 @@ class AddressBook {
     }
     this.contacts.splice(index, 1);
     console.log(`Contact ${firstName} ${lastName} deleted successfully.`);
+<<<<<<< HEAD
   }
 
 <<<<<<< HEAD
@@ -119,6 +146,8 @@ class AddressBook {
     }
     contact.updateDetails(newDetails);
     console.log(`Contact ${firstName} ${lastName} updated successfully!`);
+=======
+>>>>>>> UC7
   }
 
 =======
