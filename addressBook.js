@@ -19,16 +19,10 @@ class Contact {
     this.email = email;
   }
 
-  updateDetails(newDetails) {
-    Object.assign(this, newDetails);
-  }
-
-  // Display contact details
   display() {
     return `${this.firstName} ${this.lastName} - ${this.phone}, ${this.email}`;
   }
 
-  // Validation Methods
   validateName(name, fieldName) {
     const namePattern = /^[A-Z][a-zA-Z]{2,}$/;
     if (!namePattern.test(name)) {
@@ -64,7 +58,6 @@ class Contact {
   }
 }
 
-// AddressBook class to manage contacts
 class AddressBook {
   constructor(name) {
     this.name = name;
@@ -76,12 +69,31 @@ class AddressBook {
       throw new Error("Invalid contact object.");
     }
 
-    if (this.contacts.some(c => c.firstName === contact.firstName && c.lastName === contact.lastName)) {
-      throw new Error("Duplicate Entry: Contact with the same name already exists.");
+    const isDuplicate = this.contacts.some(c => c.firstName === contact.firstName && c.lastName === contact.lastName);
+    if (isDuplicate) {
+      throw new Error("Duplicate contact: A contact with the same name already exists.");
     }
 
     this.contacts.push(contact);
     console.log(`Contact added to ${this.name} successfully!`);
+  }
+
+  updateContact(firstName, lastName, updatedInfo) {
+    const contact = this.contacts.find(c => c.firstName === firstName && c.lastName === lastName);
+    if (!contact) {
+      throw new Error("Contact not found.");
+    }
+
+    try {
+      for (const key in updatedInfo) {
+        if (contact.hasOwnProperty(key)) {
+          contact[key] = updatedInfo[key];
+        }
+      }
+      console.log(`Contact ${firstName} ${lastName} updated successfully.`);
+    } catch (error) {
+      console.error("Error updating contact:", error.message);
+    }
   }
 
   listContacts() {
@@ -95,33 +107,34 @@ class AddressBook {
     });
   }
 
-  deleteContactByName(firstName, lastName) {
+  findAndDeleteContact(firstName, lastName) {
     const index = this.contacts.findIndex(contact => contact.firstName === firstName && contact.lastName === lastName);
     if (index === -1) {
-      console.log(`Contact ${firstName} ${lastName} not found.`);
+      console.log("Contact not found.");
       return;
     }
     this.contacts.splice(index, 1);
-    console.log(`Contact ${firstName} ${lastName} deleted successfully!`);
-  }
-
-  updateContactByName(firstName, lastName, newDetails) {
-    const contact = this.contacts.find(contact => contact.firstName === firstName && contact.lastName === lastName);
-    if (!contact) {
-      console.log(`Contact ${firstName} ${lastName} not found.`);
-      return;
-    }
-    contact.updateDetails(newDetails);
-    console.log(`Contact ${firstName} ${lastName} updated successfully!`);
+    console.log(`Contact ${firstName} ${lastName} deleted successfully.`);
   }
 
   getContactCount() {
-    console.log(`Total Contacts in ${this.name}: ${this.contacts.length}`);
-    return this.contacts.length;
+    const count = this.contacts.reduce((total) => total + 1, 0);
+    console.log(`Total contacts in '${this.name}': ${count}`);
+    return count;
+  }
+
+  searchByCityOrState(location) {
+    const results = this.contacts.filter(contact => contact.city === location || contact.state === location);
+    if (results.length === 0) {
+      console.log(`No contacts found in ${location}.`);
+      return [];
+    }
+    console.log(`Contacts in ${location}:`);
+    results.forEach(contact => console.log(contact.display()));
+    return results;
   }
 }
 
-// AddressBookManager to manage multiple address books
 class AddressBookManager {
   constructor() {
     this.addressBooks = [];
