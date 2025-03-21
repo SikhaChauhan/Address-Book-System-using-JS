@@ -19,12 +19,10 @@ class Contact {
     this.email = email;
   }
 
-  // Display contact details
   display() {
     return `${this.firstName} ${this.lastName} - ${this.phone}, ${this.email}`;
   }
 
-  // Validation Methods
   validateName(name, fieldName) {
     const namePattern = /^[A-Z][a-zA-Z]{2,}$/;
     if (!namePattern.test(name)) {
@@ -55,12 +53,11 @@ class Contact {
   validateEmail(email) {
     const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     if (!emailPattern.test(email)) {
-      throw new Error("Invalid Email: Must follow standard email format.");
+      throw new Error("Invalid Email: Must follow standard email format (e.g., user@example.com).");
     }
   }
 }
 
-// AddressBook class to manage contacts
 class AddressBook {
   constructor(name) {
     this.name = name;
@@ -86,57 +83,41 @@ class AddressBook {
     });
   }
 
-  editContact(firstName, lastName, newDetails) {
-    const contact = this.contacts.find(
-      (c) => c.firstName === firstName && c.lastName === lastName
+  findContactByName(firstName, lastName) {
+    return this.contacts.find(
+      (contact) => contact.firstName === firstName && contact.lastName === lastName
     );
+  }
 
+  editContact(firstName, lastName, updatedDetails) {
+    const contact = this.findContactByName(firstName, lastName);
     if (!contact) {
-      throw new Error("Contact not found.");
+      console.log("Contact not found.");
+      return;
     }
 
-    try {
-      Object.keys(newDetails).forEach((key) => {
-        if (contact[`validate${key.charAt(0).toUpperCase() + key.slice(1)}`]) {
-          contact[`validate${key.charAt(0).toUpperCase() + key.slice(1)}`](
-            newDetails[key]
-          );
-        }
-        contact[key] = newDetails[key];
-      });
-      console.log("Contact updated successfully!");
-    } catch (error) {
-      console.error("Update failed:", error.message);
-    }
+    Object.keys(updatedDetails).forEach((key) => {
+      if (contact.hasOwnProperty(key)) {
+        contact[key] = updatedDetails[key];
+      }
+    });
+
+    console.log("Contact updated successfully!");
   }
 
   deleteContact(firstName, lastName) {
     const index = this.contacts.findIndex(
-      (c) => c.firstName === firstName && c.lastName === lastName
+      (contact) => contact.firstName === firstName && contact.lastName === lastName
     );
-
     if (index === -1) {
-      throw new Error("Contact not found.");
+      console.log("Contact not found.");
+      return;
     }
-
     this.contacts.splice(index, 1);
     console.log("Contact deleted successfully!");
   }
-
-  findContact(query) {
-    const results = this.contacts.filter(
-      (c) => c.firstName.includes(query) || c.lastName.includes(query)
-    );
-
-    if (results.length === 0) {
-      console.log("No matching contacts found.");
-    } else {
-      results.forEach((contact) => console.log(contact.display()));
-    }
-  }
 }
 
-// AddressBookManager to manage multiple address books
 class AddressBookManager {
   constructor() {
     this.addressBooks = [];
@@ -148,6 +129,7 @@ class AddressBookManager {
     }
     const newBook = new AddressBook(name);
     this.addressBooks.push(newBook);
+    console.log(`Address Book '${name}' created successfully!`);
     return newBook;
   }
 
@@ -167,7 +149,6 @@ class AddressBookManager {
   }
 }
 
-// Create AddressBookManager instance
 const manager = new AddressBookManager();
 
 const readline = require("readline").createInterface({
@@ -175,38 +156,53 @@ const readline = require("readline").createInterface({
   output: process.stdout,
 });
 
-function mainMenu() {
-  console.log("1. Create Address Book");
-  console.log("2. List Address Books");
-  console.log("3. Exit");
-
-  readline.question("Choose an option: ", (option) => {
-    switch (option) {
-      case "1":
-        readline.question("Enter Address Book name: ", (name) => {
-          try {
-            manager.createAddressBook(name);
-            console.log(`Address Book '${name}' created.`);
-            mainMenu();
-          } catch (error) {
-            console.error(error.message);
-            mainMenu();
-          }
+function createContact(addressBook) {
+  readline.question("Enter First Name: ", (firstName) => {
+    readline.question("Enter Last Name: ", (lastName) => {
+      readline.question("Enter Address: ", (address) => {
+        readline.question("Enter City: ", (city) => {
+          readline.question("Enter State: ", (state) => {
+            readline.question("Enter ZIP Code: ", (zip) => {
+              readline.question("Enter Phone Number: ", (phone) => {
+                readline.question("Enter Email: ", (email) => {
+                  try {
+                    const newContact = new Contact(
+                      firstName,
+                      lastName,
+                      address,
+                      city,
+                      state,
+                      zip,
+                      phone,
+                      email
+                    );
+                    addressBook.addContact(newContact);
+                    addressBook.listContacts();
+                  } catch (error) {
+                    console.error(error.message);
+                  }
+                  readline.close();
+                });
+              });
+            });
+          });
         });
-        break;
-      case "2":
-        manager.listAddressBooks();
-        mainMenu();
-        break;
-      case "3":
-        console.log("Goodbye!");
-        readline.close();
-        break;
-      default:
-        console.log("Invalid option. Try again.");
-        mainMenu();
+      });
+    });
+  });
+}
+
+function createAddressBook() {
+  readline.question("Enter new Address Book name: ", (name) => {
+    try {
+      const newBook = manager.createAddressBook(name);
+      console.log(`ℹ️ Address Book '${name}' is ready.`);
+      createContact(newBook);
+    } catch (error) {
+      console.error(error.message);
+      readline.close();
     }
   });
 }
 
-mainMenu();
+createAddressBook();
