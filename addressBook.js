@@ -19,6 +19,10 @@ class Contact {
     this.email = email;
   }
 
+  updateDetails(newDetails) {
+    Object.assign(this, newDetails);
+  }
+
   // Display contact details
   display() {
     return `${this.firstName} ${this.lastName} - ${this.phone}, ${this.email}`;
@@ -26,7 +30,7 @@ class Contact {
 
   // Validation Methods
   validateName(name, fieldName) {
-    const namePattern = /^[A-Z][a-zA-Z]{2,}$/; // Starts with uppercase, min 3 chars
+    const namePattern = /^[A-Z][a-zA-Z]{2,}$/;
     if (!namePattern.test(name)) {
       throw new Error(`Invalid ${fieldName}: Must start with a capital letter and have at least 3 characters.`);
     }
@@ -39,14 +43,14 @@ class Contact {
   }
 
   validateZip(zip) {
-    const zipPattern = /^[0-9]{5,6}$/; // 5-6 digit numeric
+    const zipPattern = /^[0-9]{5,6}$/;
     if (!zipPattern.test(zip)) {
       throw new Error("Invalid ZIP Code: Must be 5 or 6 digits.");
     }
   }
 
   validatePhone(phone) {
-    const phonePattern = /^[0-9]{10}$/; // 10 digit number
+    const phonePattern = /^[0-9]{10}$/;
     if (!phonePattern.test(phone)) {
       throw new Error("Invalid Phone Number: Must be 10 digits.");
     }
@@ -63,20 +67,23 @@ class Contact {
 // AddressBook class to manage contacts
 class AddressBook {
   constructor(name) {
-    this.name = name; // AddressBook name
+    this.name = name;
     this.contacts = [];
   }
 
-  // Add a new contact
   addContact(contact) {
     if (!(contact instanceof Contact)) {
       throw new Error("Invalid contact object.");
     }
+
+    if (this.contacts.some(c => c.firstName === contact.firstName && c.lastName === contact.lastName)) {
+      throw new Error("Duplicate Entry: Contact with the same name already exists.");
+    }
+
     this.contacts.push(contact);
     console.log(`Contact added to ${this.name} successfully!`);
   }
 
-  // List all contacts
   listContacts() {
     if (this.contacts.length === 0) {
       console.log(`${this.name} is empty!`);
@@ -88,7 +95,6 @@ class AddressBook {
     });
   }
 
-  // Find and delete a contact by name
   deleteContactByName(firstName, lastName) {
     const index = this.contacts.findIndex(contact => contact.firstName === firstName && contact.lastName === lastName);
     if (index === -1) {
@@ -99,7 +105,16 @@ class AddressBook {
     console.log(`Contact ${firstName} ${lastName} deleted successfully!`);
   }
 
-  // Get the number of contacts
+  updateContactByName(firstName, lastName, newDetails) {
+    const contact = this.contacts.find(contact => contact.firstName === firstName && contact.lastName === lastName);
+    if (!contact) {
+      console.log(`Contact ${firstName} ${lastName} not found.`);
+      return;
+    }
+    contact.updateDetails(newDetails);
+    console.log(`Contact ${firstName} ${lastName} updated successfully!`);
+  }
+
   getContactCount() {
     console.log(`Total Contacts in ${this.name}: ${this.contacts.length}`);
     return this.contacts.length;
@@ -112,7 +127,6 @@ class AddressBookManager {
     this.addressBooks = [];
   }
 
-  // Create a new Address Book
   createAddressBook(name) {
     if (this.addressBooks.some(book => book.name === name)) {
       throw new Error(`Address Book '${name}' already exists.`);
@@ -123,7 +137,6 @@ class AddressBookManager {
     return newBook;
   }
 
-  // List all Address Books
   listAddressBooks() {
     if (this.addressBooks.length === 0) {
       console.log("📚 No Address Books found!");
@@ -135,22 +148,18 @@ class AddressBookManager {
     });
   }
 
-  // Find an Address Book by name
   getAddressBook(name) {
     return this.addressBooks.find(book => book.name === name);
   }
 }
 
-// Create AddressBookManager instance
 const manager = new AddressBookManager();
 
-// User input setup
 const readline = require("readline").createInterface({
   input: process.stdin,
   output: process.stdout,
 });
 
-// Function to create and validate a contact
 function createContact(addressBook) {
   readline.question("Enter First Name: ", (firstName) => {
     readline.question("Enter Last Name: ", (lastName) => {
