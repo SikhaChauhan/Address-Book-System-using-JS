@@ -21,6 +21,7 @@ class Contact {
 
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
   updateDetails(newDetails) {
     Object.assign(this, newDetails);
   }
@@ -30,6 +31,8 @@ class Contact {
 >>>>>>> UC6
 =======
 >>>>>>> UC7
+=======
+>>>>>>> UC8
   display() {
     return `${this.firstName} ${this.lastName} - ${this.phone}, ${this.email}`;
   }
@@ -120,6 +123,7 @@ class AddressBook {
 
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
   deleteContactByName(firstName, lastName) {
 =======
   findAndDeleteContact(firstName, lastName) {
@@ -127,6 +131,9 @@ class AddressBook {
 =======
   findAndDeleteContact(firstName, lastName) {
 >>>>>>> UC7
+=======
+  findAndDeleteContact(firstName, lastName) {
+>>>>>>> UC8
     const index = this.contacts.findIndex(contact => contact.firstName === firstName && contact.lastName === lastName);
     if (index === -1) {
       console.log("Contact not found.");
@@ -134,6 +141,7 @@ class AddressBook {
     }
     this.contacts.splice(index, 1);
     console.log(`Contact ${firstName} ${lastName} deleted successfully.`);
+<<<<<<< HEAD
 <<<<<<< HEAD
   }
 
@@ -148,6 +156,8 @@ class AddressBook {
     console.log(`Contact ${firstName} ${lastName} updated successfully!`);
 =======
 >>>>>>> UC7
+=======
+>>>>>>> UC8
   }
 
 =======
@@ -156,6 +166,20 @@ class AddressBook {
     const count = this.contacts.reduce((total) => total + 1, 0);
     console.log(`Total contacts in '${this.name}': ${count}`);
     return count;
+<<<<<<< HEAD
+=======
+  }
+
+  searchByCityOrState(location) {
+    const results = this.contacts.filter(contact => contact.city === location || contact.state === location);
+    if (results.length === 0) {
+      console.log(`No contacts found in ${location}.`);
+      return [];
+    }
+    console.log(`Contacts in ${location}:`);
+    results.forEach(contact => console.log(contact.display()));
+    return results;
+>>>>>>> UC8
   }
 }
 
