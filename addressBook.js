@@ -62,7 +62,8 @@ class Contact {
 
 // AddressBook class to manage contacts
 class AddressBook {
-  constructor() {
+  constructor(name) {
+    this.name = name; // AddressBook name
     this.contacts = [];
   }
 
@@ -72,24 +73,59 @@ class AddressBook {
       throw new Error("Invalid contact object.");
     }
     this.contacts.push(contact);
-    console.log("Contact added successfully!");
+    console.log(`Contact added to ${this.name} successfully!`);
   }
 
   // List all contacts
   listContacts() {
     if (this.contacts.length === 0) {
-      console.log("📭 Address book is empty!");
+      console.log(`${this.name} is empty!`);
       return;
     }
-    console.log("Address Book:");
+    console.log(`${this.name} Address Book:`);
     this.contacts.forEach((contact, index) => {
       console.log(`${index + 1}. ${contact.display()}`);
     });
   }
 }
 
-// Create AddressBook instance
-const myAddressBook = new AddressBook();
+// AddressBookManager to manage multiple address books
+class AddressBookManager {
+  constructor() {
+    this.addressBooks = [];
+  }
+
+  // Create a new Address Book
+  createAddressBook(name) {
+    if (this.addressBooks.some(book => book.name === name)) {
+      throw new Error(`Address Book '${name}' already exists.`);
+    }
+    const newBook = new AddressBook(name);
+    this.addressBooks.push(newBook);
+    console.log(`Address Book '${name}' created successfully!`);
+    return newBook;
+  }
+
+  // List all Address Books
+  listAddressBooks() {
+    if (this.addressBooks.length === 0) {
+      console.log("📚 No Address Books found!");
+      return;
+    }
+    console.log("📚 Available Address Books:");
+    this.addressBooks.forEach((book, index) => {
+      console.log(`${index + 1}. ${book.name} (${book.contacts.length} contacts)`);
+    });
+  }
+
+  // Find an Address Book by name
+  getAddressBook(name) {
+    return this.addressBooks.find(book => book.name === name);
+  }
+}
+
+// Create AddressBookManager instance
+const manager = new AddressBookManager();
 
 // User input setup
 const readline = require("readline").createInterface({
@@ -98,7 +134,7 @@ const readline = require("readline").createInterface({
 });
 
 // Function to create and validate a contact
-function createContact() {
+function createContact(addressBook) {
   readline.question("Enter First Name: ", (firstName) => {
     readline.question("Enter Last Name: ", (lastName) => {
       readline.question("Enter Address: ", (address) => {
@@ -118,8 +154,8 @@ function createContact() {
                       phone,
                       email
                     );
-                    myAddressBook.addContact(newContact);
-                    myAddressBook.listContacts();
+                    addressBook.addContact(newContact);
+                    addressBook.listContacts();
                   } catch (error) {
                     console.error(error.message);
                   }
@@ -134,4 +170,17 @@ function createContact() {
   });
 }
 
-createContact();
+function createAddressBook() {
+  readline.question("Enter new Address Book name: ", (name) => {
+    try {
+      const newBook = manager.createAddressBook(name);
+      console.log(`ℹ️ Address Book '${name}' is ready.`);
+      createContact(newBook);
+    } catch (error) {
+      console.error(error.message);
+      readline.close();
+    }
+  });
+}
+
+createAddressBook();
