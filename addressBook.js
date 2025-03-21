@@ -19,10 +19,6 @@ class Contact {
     this.email = email;
   }
 
-  updateDetails(newDetails) {
-    Object.assign(this, newDetails);
-  }
-
   display() {
     return `${this.firstName} ${this.lastName} - ${this.phone}, ${this.email}`;
   }
@@ -88,8 +84,16 @@ class AddressBook {
       throw new Error("Contact not found.");
     }
 
-    contact.updateDetails(updatedInfo);
-    console.log(`Contact ${firstName} ${lastName} updated successfully.`);
+    try {
+      for (const key in updatedInfo) {
+        if (contact.hasOwnProperty(key)) {
+          contact[key] = updatedInfo[key];
+        }
+      }
+      console.log(`Contact ${firstName} ${lastName} updated successfully.`);
+    } catch (error) {
+      console.error("Error updating contact:", error.message);
+    }
   }
 
   listContacts() {
@@ -125,7 +129,7 @@ class AddressBook {
       return [];
     }
     console.log(`Contacts in ${location}:`);
-    results.forEach(contact => console.log(contact.display()));
+    results.map(contact => console.log(contact.display()));
     return results;
   }
 }
@@ -169,16 +173,25 @@ const readline = require("readline").createInterface({
 });
 
 function createContact(addressBook) {
-  readline.question("Enter First Name: ", firstName => {
-    readline.question("Enter Last Name: ", lastName => {
-      readline.question("Enter Address: ", address => {
-        readline.question("Enter City: ", city => {
-          readline.question("Enter State: ", state => {
-            readline.question("Enter ZIP Code: ", zip => {
-              readline.question("Enter Phone Number: ", phone => {
-                readline.question("Enter Email: ", email => {
+  readline.question("Enter First Name: ", (firstName) => {
+    readline.question("Enter Last Name: ", (lastName) => {
+      readline.question("Enter Address: ", (address) => {
+        readline.question("Enter City: ", (city) => {
+          readline.question("Enter State: ", (state) => {
+            readline.question("Enter ZIP Code: ", (zip) => {
+              readline.question("Enter Phone Number: ", (phone) => {
+                readline.question("Enter Email: ", (email) => {
                   try {
-                    const newContact = new Contact(firstName, lastName, address, city, state, zip, phone, email);
+                    const newContact = new Contact(
+                      firstName,
+                      lastName,
+                      address,
+                      city,
+                      state,
+                      zip,
+                      phone,
+                      email
+                    );
                     addressBook.addContact(newContact);
                     addressBook.listContacts();
                     addressBook.getContactCount();
@@ -197,7 +210,7 @@ function createContact(addressBook) {
 }
 
 function createAddressBook() {
-  readline.question("Enter new Address Book name: ", name => {
+  readline.question("Enter new Address Book name: ", (name) => {
     try {
       const newBook = manager.createAddressBook(name);
       console.log(`ℹ️ Address Book '${name}' is ready.`);
