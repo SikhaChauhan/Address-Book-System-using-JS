@@ -133,6 +133,22 @@ class AddressBook {
     return results;
   }
 
+  searchByNameOrPhone(query) {
+    const results = this.contacts.filter(contact =>
+      `${contact.firstName} ${contact.lastName}`.toLowerCase().includes(query.toLowerCase()) ||
+      contact.phone.includes(query)
+    );
+
+    if (results.length === 0) {
+      console.log(`No contacts found for query: '${query}'.`);
+      return [];
+    }
+
+    console.log(`Search results for '${query}':`);
+    results.map(contact => console.log(contact.display()));
+    return results;
+  }
+
   getCountByCityAndState() {
     const cityCount = this.contacts.reduce((acc, contact) => {
       acc[contact.city] = (acc[contact.city] || 0) + 1;
@@ -148,6 +164,12 @@ class AddressBook {
     console.log("Contact count by state:", stateCount);
 
     return { cityCount, stateCount };
+  }
+
+  sortByName() {
+    this.contacts.sort((a, b) => a.firstName.localeCompare(b.firstName));
+    console.log("Contacts sorted alphabetically by first name:");
+    this.listContacts();
   }
 }
 
@@ -183,61 +205,3 @@ class AddressBookManager {
 }
 
 const manager = new AddressBookManager();
-
-const readline = require("readline").createInterface({
-  input: process.stdin,
-  output: process.stdout,
-});
-
-function createContact(addressBook) {
-  readline.question("Enter First Name: ", (firstName) => {
-    readline.question("Enter Last Name: ", (lastName) => {
-      readline.question("Enter Address: ", (address) => {
-        readline.question("Enter City: ", (city) => {
-          readline.question("Enter State: ", (state) => {
-            readline.question("Enter ZIP Code: ", (zip) => {
-              readline.question("Enter Phone Number: ", (phone) => {
-                readline.question("Enter Email: ", (email) => {
-                  try {
-                    const newContact = new Contact(
-                      firstName,
-                      lastName,
-                      address,
-                      city,
-                      state,
-                      zip,
-                      phone,
-                      email
-                    );
-                    addressBook.addContact(newContact);
-                    addressBook.listContacts();
-                    addressBook.getContactCount();
-                    addressBook.getCountByCityAndState();
-                  } catch (error) {
-                    console.error(error.message);
-                  }
-                  readline.close();
-                });
-              });
-            });
-          });
-        });
-      });
-    });
-  });
-}
-
-function createAddressBook() {
-  readline.question("Enter new Address Book name: ", (name) => {
-    try {
-      const newBook = manager.createAddressBook(name);
-      console.log(`ℹ️ Address Book '${name}' is ready.`);
-      createContact(newBook);
-    } catch (error) {
-      console.error(error.message);
-      readline.close();
-    }
-  });
-}
-
-createAddressBook();
