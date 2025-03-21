@@ -171,6 +171,17 @@ class AddressBook {
     console.log("Contacts sorted alphabetically by first name:");
     this.listContacts();
   }
+
+  sortByCityStateOrZip(field) {
+    if (!["city", "state", "zip"].includes(field)) {
+      console.error("Invalid field. Use 'city', 'state', or 'zip'.");
+      return;
+    }
+
+    this.contacts.sort((a, b) => a[field].localeCompare(b[field].toString()));
+    console.log(`Contacts sorted by ${field}:`);
+    this.listContacts();
+  }
 }
 
 class AddressBookManager {
